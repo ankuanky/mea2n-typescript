@@ -11,27 +11,23 @@ export class ValidationService {
     constructor() {
     }
 
-    public validateUser(req: express.Request, res: express.Response) {
-        let username = { 'local.username': req.params.username };
-        // Use `mongoose` to a single `user` item by `username` in the database
-        Users.findOne(username, (err: any, user: User) => {
-            if (err)
-                res.send(err);
-            else {
-                // If no user was found with a matching username
-                if (user === null) {
-                    // Set a `HTTP` status code of `404` `Not Found`
-                    res.status(200);
-                    // Send our validation object
-                    res.json({ usernameTaken: false });
-                    // If a user was found with a matchin username
-                } else {
-                    // Set a `HTTP` status code of `409` `Conflict`
-                    res.status(409);
-                    // Send our validation object
-                    res.json({ usernameTaken: true });
+    public validateUser(username: string) {
+        return new Promise((resolve, reject) => {
+            Users.findOne(username, (err: any, user: User) => {
+                if (err) {
+                    reject(err);
                 }
-            }
+                else {
+                    // If no user was found with a matching username
+                    if (user === null) {
+                        resolve(false);
+                    } else {
+                        resolve(true);
+                    }
+                }
+            });
         });
+        // Use `mongoose` to a single `user` item by `username` in the database
+
     }
 }

@@ -22,23 +22,17 @@ import mongoose = require('mongoose');
 let ObjectId = require('mongoose').Types.ObjectId;
 
 class SessionUser implements IUser {
-  local: {
     username: string;
-    lastname: string;
-    password: string;
     email: string;
-    region_id:mongoose.Schema.Types.ObjectId;
-    companie_id:mongoose.Schema.Types.ObjectId;
-  };
-  role: string;
-  _id: any;
+    role: string;
+    _id: any;
 
   constructor(username: string,
               id?: string,
               email?: string,
               role?: string) {
-    this.local.username = username;
-    this.local.email = email;
+    this.username = username;
+    this.email = email;
     this._id = id || undefined;
     this.role = role || undefined;
   }
@@ -124,16 +118,9 @@ export default function passportConf(passport) {
   passport.serializeUser((user: UserDocument, done: any) => {
     let sessionUser = {
       _id : user._id,
-      username : user.local.username,
+      username : user.username,
       role : user.role
     };
-
-    // TODO: Figure out why this isn't working
-    /*user.local.email ? sessionUser = new SessionUser(user.local.username,
-                                                     user._id,
-                                                     user.local.email)
-                     : sessionUser = new SessionUser(user.local.username,
-                                                     user._id);*/
     done(null, sessionUser);
   });
 
@@ -213,8 +200,8 @@ export default function passportConf(passport) {
       Users.findOne({
         // Model.find `$or` Mongoose condition
         $or : [
-          { 'local.username' : username },
-          { 'local.email' : req.body.email }
+          { 'username' : username },
+          { 'email' : req.body.email }
         ]
       }, (err, user) => {
         // If there are any errors, return the error
@@ -238,10 +225,10 @@ export default function passportConf(passport) {
           // Set the user's local credentials
           // Combat case sensitivity by converting username and
           // email to lowercase characters
-          newUser.local.username = username.toLowerCase();
-          newUser.local.email = req.body.email.toLowerCase();
+          newUser.username = username.toLowerCase();
+          newUser.email = req.body.email.toLowerCase();
           // Hash password with model method
-          newUser.local.password = newUser.generateHash(password);
+          newUser.password = newUser.generateHash(password);
           // Save the new user
           newUser.save((err) => {
             if (err)
@@ -295,8 +282,8 @@ export default function passportConf(passport) {
     Users.findOne({
       // Model.find `$or` Mongoose condition
       $or : [
-        { 'local.username' : username.toLowerCase() },
-        { 'local.email' : username.toLowerCase() }
+        { 'username' : username.toLowerCase() },
+        { 'email' : username.toLowerCase() }
       ]
     }, (err, user) => {
       // If there are any errors, return the error before anything

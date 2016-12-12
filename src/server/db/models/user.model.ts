@@ -21,36 +21,29 @@ let Schema = mongoose.Schema;
 
 
 export interface IUser {
-  local: {
     username: string;
-    lastname:string;
+    fullname:string;
     password: string;
     email: string;
-    region_id:mongoose.Schema.Types.ObjectId;
-    companie_id:mongoose.Schema.Types.ObjectId;
-  };
-  role: string;
-  _id: any;
+    role: string;
+    _id: any;
 }
 
 export class User  {
-  local: {
-    username: string;
-    lastname:string;
-    password: string;
-    email: string;
-    region_id:mongoose.Schema.Types.ObjectId;
-    companie_id:mongoose.Schema.Types.ObjectId;
-  };
+  username: string;
+  fullname:string;
+  password: string;
+  email: string;
   role: string;
   _id: any;
 
   constructor(data: User) {
-    console.log("data.local",data.local)
-
-    this.local = data.local;
-
-    this.role = data.role || '';
+    console.log("data",data)
+    this.username = data.username;
+    this.fullname = data.fullname? data.fullname: '';
+    this.password = data.password;
+    this.email = data.email;
+    this.role = data.role || 'ROLE_USER';
   }
 
   generateHash(password): string {
@@ -64,16 +57,11 @@ export class User  {
 
 // Define the schema for the showcase item
 let userSchema = new Schema({
-
-  local : {
-    username : { type : String, unique : true },
-    password : String,
-    email : { type : String, unique : true },
-    lastname : { type : String},
-    region_id: {type : mongoose.Schema.Types.ObjectId },
-    companie_id: {type : mongoose.Schema.Types.ObjectId },
-  },
-  role : { type : String }
+    username : { type : String, unique : true, required: true },
+    password : {type: String, unique: true, required: true },
+    email : {type: String, unique: true, required: true },
+    fullname : { type : String},
+    role : { type : String }
 });
 
 // Register methods
