@@ -99,7 +99,7 @@ export default (app: express.Application,
   // Pass in our Express app and Router
   let validationRoutes: validation.ValidationController = new validation.ValidationController(this.app, router);
 
-  let userRoutes: user.UserController = new user.UserController(this.app, router);
+  let userRoutes: user.UserController = new user.UserController(this.app, router, admin);
   let eventRoutes: event.EventController= new event.EventController(this.app,router);
 
   // All of our routes will be prefixed with /api

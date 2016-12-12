@@ -2,6 +2,7 @@
 
 import * as express from 'express';
 import { IUser, User, UserDocument, Users } from '../../db/models/user.model';
+import { UserResponseDTO }  from '../DTO/UserResponseDTO';
 const BASE_URI = '/user';
 
 
@@ -45,6 +46,7 @@ export class UserService {
     }
 
     public saveUser(newUser: any) {
+        console.log(newUser);
         return new Promise((resolve, reject) => {
             Users.findOne({
                 $or: [{ 'username': newUser.username },
@@ -58,13 +60,19 @@ export class UserService {
                 if (user) {
                     resolve(null);
                 } else {
-
-                    Users.create(newUser, (err: any, user: any) => {
+                    let user = new User(newUser);
+//                    user.username = newUser.username;
+//                    user.email = newUser.email;
+//                    user.fullname = newUser.fullname || '';
+//                    user.role = newUser.role || 'ROLE_USER';
+//                    user.password = user.generateHash(newUser.password);
+                    Users.create(user, (err: any, data: any) => {
                         if (err) {
                             console.log(err);
                             reject(err);
                         }
-                        resolve(user._id);
+                        console.log(data);
+                        resolve(data._id);
                     });
                 }
             });
@@ -73,12 +81,14 @@ export class UserService {
     }
     public getUser(id: any) {
         return new Promise((resolve, reject) => {
-            Users.find({ _id: id }, (err: any, user: User) => {
+            Users.findOne({ _id: id }, (err: any, user: User) => {
                 if (err) {
                     console.log(err);
                     reject(err);
                 }
-                resolve(user);
+                let userResponse = new UserResponseDTO(user);
+                //console.log(userResponse);
+                resolve(userResponse.getUserDetails());
             });
         });
 
@@ -106,7 +116,7 @@ export class UserService {
     }
     
     public updateUser(id: any, userDetails: any) {
-        return new promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             this.getUser(id)
                 .then((user: any) => {
                     if (!user) {

@@ -53,9 +53,8 @@ module UserModule {
                 res: express.Response,
                 next: express.NextFunction) => {
                 console.log("userAA", req.body);
-                let user = new User(req.body);
                 try {
-                    this.userService.saveUser(user)
+                    this.userService.saveUser(req.body)
                     .then((userId: any) => {
                             if(userId) {
                                 res.status(200);
@@ -77,7 +76,7 @@ module UserModule {
             });
 
             //controller for getting user details
-            this.router.get(`${BASE_URI}/:user_id`, this.admin, (req: express.Request,
+            this.router.get(`${BASE_URI}/:user_id`, (req: express.Request,
                 res: express.Response,
                 next: express.NextFunction) => {
                 try {

@@ -41,7 +41,7 @@ export class User  {
     console.log("data",data)
     this.username = data.username;
     this.fullname = data.fullname? data.fullname: '';
-    this.password = data.password;
+    this.password = this.generateHash(data.password);
     this.email = data.email;
     this.role = data.role || 'ROLE_USER';
   }
@@ -51,7 +51,7 @@ export class User  {
   };
 
   validPassword(password): boolean {
-    return bcrypt.compareSync(password, this.local.password);
+    return bcrypt.compareSync(password, this.password);
   };
 }
 

@@ -23,6 +23,8 @@ let ObjectId = require('mongoose').Types.ObjectId;
 
 class SessionUser implements IUser {
     username: string;
+    fullname: string;
+    password: string;
     email: string;
     role: string;
     _id: any;

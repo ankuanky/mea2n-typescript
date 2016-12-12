@@ -21,7 +21,7 @@ module Validation {
         }
         
         private configureController() {;
-              console.log('router' + router);
+              console.log('router' + this.router);
               // Configure routes
               this.router.route(`${BASE_URI}/username/:username`)
                 .get((req: express.Request,
