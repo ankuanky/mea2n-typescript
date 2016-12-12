@@ -1,0 +1,17 @@
+
+
+{
+  "ENV": "development",
+  "PORT": 3000,
+  "SOCKET_PORT": 3001,
+  "MONGO_URI": {
+    "DEVELOPMENT" : "mongodb://localhost:27017/codezinger_community",
+
+    "PRODUCTION" : "mongodb://localhost:27017/codezinger_community",
+
+    "TEST" : "mongodb://alan345:alan345@ds153677.mlab.com:53677/heroku_6f0h7zgr/vulgar-test"
+
+  },
+  "SESSION_SECRET": "71AEDA82A378DD281E5376717555A",
+  "CookieSecure": false
+}
