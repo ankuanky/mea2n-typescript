@@ -16,6 +16,7 @@ import * as local from 'passport-local';
 
 // Load `User` `interfaces`, `class`, and `model`
 import { IUser, User, UserDocument, Users } from '../../db/models/user.model';
+import { UserResponseDTO } from '../DTO/UserResponseDTO';
 import mongoose = require('mongoose');
 
 // Load the `Mongoose` `ObjectId` function

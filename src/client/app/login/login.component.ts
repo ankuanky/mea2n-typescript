@@ -41,7 +41,7 @@ export class LoginComponent {
 
   newUser() {
 
-    let user = new FormModel('', '');
+    let user = new FormModel('', '', false);
 
     (<FormGroup>this.loginForm).setValue(user, { onlySelf: true });
 
@@ -55,17 +55,18 @@ export class LoginComponent {
 
     setTimeout(() => this.setMessage(), 0);
 
-    let user = new FormModel('', '');
+    let user = new FormModel('', '', false);
 
     this.loginForm = this.formBuilder.group({
       username: [user.username, [<any>Validators.required, <any>Validators.minLength(3)]],
       password: [user.password, [<any>Validators.required, <any>Validators.minLength(8)]],
+      rememberMe: [user.rememberMe]
     });
   }
 
   processUserData() {
     let userData = new User(this.loginForm.controls['username'].value.toLowerCase(),
-                            this.loginForm.controls['password'].value);
+                            this.loginForm.controls['password'].value, this.loginForm.controls['rememberMe'].value);
     this.login(userData);
   }
 

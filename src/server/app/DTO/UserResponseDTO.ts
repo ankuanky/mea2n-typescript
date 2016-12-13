@@ -4,26 +4,30 @@ export class UserResponseDTO {
     fullname: string;
     email: string;
     role: string;
-    constructor(user: User) {
+    rememberMe: boolean;
+    constructor(user: User, rememberMe: boolean = false) {
         this.username = user.username;
         this.fullname = user.fullname;
         this.email = user.email;
         this.role = user.role;
+        this.rememberMe = rememberMe;
     }
     getUserDetails() {
         let user = {
             username: this.username,
             fullname: this.fullname,
             email: this.email,
-            role: this.role
+            role: this.role,
+            rememberMe: this.rememberMe
         }
         return user;
     }
 
-    setUserDetails(user: User) {
+    setUserDetails(user: User, rememberMe: boolean = false) {
         this.username = user.username;
         this.fullname = user.fullname;
         this.email = user.email;
         this.role = user.role;
+        this.rememberMe = rememberMe;
     }
 }

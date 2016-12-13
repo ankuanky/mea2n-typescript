@@ -20,8 +20,6 @@ import { LoginModule } from './login';
 import { NoContentComponent } from './no-content';
 import { RegisterComponent, RegisterRoutingModule } from './register';
 import { ROUTES } from './app.routes';
-
-import { EventComponent } from './event/index';
 import { SHARED_APP_DIRECTIVES } from './shared/directives';
 import { SHARED_APP_SERVICES } from './shared/services';
 
@@ -48,8 +46,7 @@ type StoreType = {
     ...SHARED_APP_DIRECTIVES,
     AppComponent,
     NoContentComponent,
-    RegisterComponent,
-    EventComponent
+    RegisterComponent
   ],
   imports: [ // import Angular's modules
     BrowserModule,

@@ -120,6 +120,7 @@ module.exports = function(options) {
           loaders: [
             'awesome-typescript-loader',
             'angular2-template-loader',
+            'angular2-router-loader',
             '@angularclass/hmr-loader?pretty=' + !isProd + '&prod=' + isProd
           ],
           exclude: [/\.(spec|e2e)\.ts$/]
