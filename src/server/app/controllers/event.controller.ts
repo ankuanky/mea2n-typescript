@@ -1,30 +1,42 @@
 import * as express from 'express';
-import { EventDocument, Event , Events} from '../../db/models/event.model';
-import Controller  from '../config/controller.config';
+import { EventDocument, Event, Events} from '../../db/models/event.model';
 import { EventService } from '../services/eventService';
+import {ErrorDTO} from '../DTO/ErrorDTO';
 const BASE_URI = '/event';
 
 module EventModule {
-    export class EventController extends Controller {
+    export class EventController {
         eventService: EventService;
-        constructor(app: express.Application, router: express.Router) {
-            super(app, router, Events);
+        router: express.Router;
+        app: express.Application;
+        auth: any;
+        constructor(app: express.Application, router: express.Router, auth: any) {
+            this.router = router;
+            this.app = app;
+            this.auth = auth;
             this.eventService = new EventService();
             this.configureController();
         }
 
         private configureController() {
-            let router = super.getRouter();
-            router.route(`${BASE_URI}`).post((req: express.Request,
+            this.router.route(`${BASE_URI}`).post(this.auth, (req: express.Request,
                 res: express.Response,
                 next: express.NextFunction) => {
-                console.log("userAA", req.body);
-                let event = new Event(req.body);
-                this.eventService.saveEvent(event);
-                console.log(event);
-                super.create(req, res, next, event);
-            });
-        }
+                try {               
+                    let event = new Event(req.body);
+                    console.log(event);
+                    this.eventService.saveEvent(event)
+                    .then((eventId: any) => {
+                        res.status(200).json({id: eventId, message: 'event created'});
+                    })
+                    .catch((err: any) => {                        
+                        res.status(500).json(new ErrorDTO(err, 1));
+                    });
+                } catch (e) {
+                    res.status(500).json(new ErrorDTO(e));
+                }
+         });
     }
+  }
 }
 export = EventModule;

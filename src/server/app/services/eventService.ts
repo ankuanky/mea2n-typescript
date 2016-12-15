@@ -13,9 +13,15 @@ export class EventService {
         // assignment of variables;
     }
 
-    public saveEvent(event:Event): any {
-        
-        console.log(event);
+    public saveEvent(event: Event): any {
+        return new Promise((resolve, reject) => {
+            Events.create(event, (err, data) => {
+                if(err) {
+                    reject(err);
+                }
+                resolve(data._id);
+            });
+        });
     }
 
 }

@@ -4,8 +4,8 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 
 import { AppState } from './app.service';
-import { AuthService } from './shared/services/auth.service';
-
+import { AuthService, } from './shared/services/auth.service';
+import { CookieService } from './shared/services/cookie.service';
 import { ChatModule } from './chat';
 
 let template = require('./app.html');
@@ -28,7 +28,7 @@ export class AppComponent {
   public name = 'Codezinger';
   public url = 'https://twitter.com/datatype_void';
 
-  constructor(private appState: AppState, private authService: AuthService) {
+  constructor(private appState: AppState, private authService: AuthService, private cookieService: CookieService) {
 
   }
 

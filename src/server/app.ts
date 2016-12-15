@@ -15,6 +15,7 @@ import { ServerEvent, IServerEvent } from './app/handlers/event.handler';
 import { IServerError, ServerError } from './app/handlers/error.handler';
 
 import passportConf from './app/config/passport.conf';
+import { TokenService } from './app/services/token.service';
 import mongooseConf from './db/config/mongoose.conf';
 import routeConf from './app/config/routes';
 
@@ -35,6 +36,7 @@ class Server {
   public eventHandlers: Array<ServerEvent.EventHandler>;
   public errorEmitter: ServerError.ErrorEmitter;
   public errorHandlers: Array<ServerError.ErrorHandler>;
+  public tokenService: TokenService;
 
   /**
    * Bootstrap the application.
@@ -67,12 +69,14 @@ class Server {
     this.errorHandlers = [new ServerError.ErrorHandler(this.errorEmitter)];
     // Configure `Mongoose`
     this.mongooseConf(this.eventEmitter, this.errorEmitter);
+    this.tokenService = new TokenService();
     // Configure `PassportJS`
-    this.passportConf(passport);
+    this.passportConf(passport, this.tokenService);
     // Configure application
     this.config();
     // Configure `Express` routes
-    this.routes(this.app, passport, this.eventEmitter);
+    this.routes(this.app, passport, this.eventEmitter, this.tokenService);
+
   }
 
   /**
@@ -113,7 +117,7 @@ class Server {
     });
 
     // Passport JS
-
+    //this.app.use(cookieParser());
     // Session secret
     this.app.use(session({
       secret : process.env.SESSION_SECRET,
@@ -125,6 +129,7 @@ class Server {
 
     // Persistent login sessions
     this.app.use(passport.session());
+    this.app.use(passport.authenticate('remember-me'));
   }
 
   /**
@@ -149,8 +154,8 @@ class Server {
    * @private
    * @param {any} passport - `PassportJS` reference
    */
-  private passportConf(passport: any) {
-    passportConf(passport);
+  private passportConf(passport: any, tokenService: TokenService) {
+    passportConf(passport, tokenService);
   }
 
   /**
@@ -165,8 +170,8 @@ class Server {
    */
   private routes(app: express.Application,
                  passport: any,
-                 ServerEventEmitter: ServerEvent.EventEmitter) {
-    routeConf(app, passport, ServerEventEmitter);
+                 ServerEventEmitter: ServerEvent.EventEmitter, tokenService: TokenService) {
+    routeConf(app, passport, ServerEventEmitter, tokenService);
   }
 }
 

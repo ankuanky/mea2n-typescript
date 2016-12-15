@@ -28,7 +28,7 @@ import * as event from '../controllers/event.controller'
 
 export default (app: express.Application,
                 passport: any,
-                ServerEventEmitter: ServerEvent.EventEmitter) => {
+                ServerEventEmitter: ServerEvent.EventEmitter, tokenService) => {
 
   let router: express.Router;
   // Get an instance of the `express` `Router`
@@ -92,7 +92,7 @@ export default (app: express.Application,
 
   // Pass in our Express app and Router.
   // Also pass in auth & admin middleware and Passport instance
-  let authRoutes: authentication.AuthController = new authentication.AuthController(this.app, router, passport, auth, admin);
+  let authRoutes: authentication.AuthController = new authentication.AuthController(this.app, router, passport, auth, admin, tokenService);
 
   // #### RESTful API Routes
 
@@ -100,7 +100,7 @@ export default (app: express.Application,
   let validationRoutes: validation.ValidationController = new validation.ValidationController(this.app, router);
 
   let userRoutes: user.UserController = new user.UserController(this.app, router, admin);
-  let eventRoutes: event.EventController= new event.EventController(this.app,router);
+  let eventRoutes: event.EventController= new event.EventController(this.app, router, auth);
 
   // All of our routes will be prefixed with /api
   app.use('/api', router);
@@ -115,7 +115,6 @@ export default (app: express.Application,
 
   // Route to handle all Angular requests
   app.get('*', (req, res) => {
-
     // Load our src/app.html file
     //** Note that the root is set to the parent of this folder, ie the app root **
     res.sendFile('/dist/client/index.html', { root: __dirname + "/../../"});

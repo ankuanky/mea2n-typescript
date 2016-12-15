@@ -34,10 +34,12 @@ module Validation {
                             res.json({usernameTaken: usernameTaken});
                         })
                         .catch((err: any) => {
+                            console.log('mongo error: ' + err);
                             res.status(500);
                             res.json({message: err, status: 0});
                         });
                     } catch(e) {
+                        console.log('other error: ' + e);
                         res.status(500);
                         res.json({message: e, status: 0});
                     }     

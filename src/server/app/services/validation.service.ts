@@ -13,7 +13,7 @@ export class ValidationService {
 
     public validateUser(username: string) {
         return new Promise((resolve, reject) => {
-            Users.findOne(username, (err: any, user: User) => {
+            Users.findOne({username: username}, (err: any, user: User) => {
                 if (err) {
                     reject(err);
                 }

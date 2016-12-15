@@ -9,6 +9,5 @@ import { DataResolver } from './app.resolver';
 export const ROUTES: Routes = [
     { path: '', component: RegisterComponent },
     { path: 'event', loadChildren: './event/event.module#EventModule' },
-    { path: '**', component: NoContentComponent },
-
+    { path: '**', component: NoContentComponent }
 ];

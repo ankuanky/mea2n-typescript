@@ -1,6 +1,8 @@
 import * as express from 'express';
 import * as passport from 'passport';
 import { IUser, User, UserDocument, Users } from '../../db/models/user.model';
+import { TokenService } from './token.service';
+import { UserResponseDTO } from '../DTO/UserResponseDTO';
 // Load the Mongoose ObjectId function to cast string as
 // ObjectId
 let ObjectId = require('mongoose').Types.ObjectId;
@@ -11,14 +13,17 @@ export class AuthService {
 
     passport: any;
     auth: any;
-    admin: any;
+    admin: any; 
+    tokenService: TokenService;
 
     constructor(passport: any,
         auth: any,
-        admin: any) {
+        admin: any,
+        tokenService: TokenService) {
         this.passport = passport;
         this.auth = auth;
         this.admin = admin;
+        this.tokenService = tokenService;
     }
 
     public delete(req: express.Request,
@@ -26,8 +31,8 @@ export class AuthService {
         Users.remove({
             // Model.find `$or` Mongoose condition
             $or: [
-                { 'local.username': req.params.uid },
-                { 'local.email': req.params.uid },
+                { 'username': req.params.uid },
+                { 'email': req.params.uid },
                 { '_id': ObjectId(req.params.uid) }
             ]
         }, (err: any) => {
@@ -55,7 +60,7 @@ export class AuthService {
         // If authentication fails, `user` will be set to `false`. If an
         // exception occured, `err` will be set. `info` contains a message
         // set within the Local Passport strategy.
-        passport.authenticate('local-login', (err: any, user: User, info: any) => {
+        passport.authenticate('local-login', {session: true}, (err: any, user: User, info: any) => {
             if (err)
                 return next(err);
             // If no user is returned...
@@ -70,21 +75,40 @@ export class AuthService {
             req.login(user, (err: any) => {
                 if (err)
                     return next(err);
-                // Set HTTP status code `200 OK`
-                res.status(200);
-                // Return the user object
-                res.send(req.user);
+                // Issue a remember me cookie if the option was checked
+                if (req.body.rememberMe) { 
+                    
+                    this.tokenService.generateAndSaveToken(user, (err, token) => {
+                      console.log(token);
+                      if (err) { return next(err); }
+                      res.cookie('remember_me', token, { path: '/', httpOnly: true, maxAge: 604800000 });
+                      res.status(200);
+                      let responseUser = new UserResponseDTO( user, req.body.rememberMe);
+                      // Return the user object
+                      res.json(responseUser);
+                    });
+                } else {
+                    // Set HTTP status code `200 OK`                
+                    res.status(200);
+                    res.cookie('remember_me', token, { path: '/', httpOnly: true});
+                    let responseUser = new UserResponseDTO( user, req.body.rememberMe);
+                    // Return the user object
+                    res.json(responseUser);
+               }
             });
         })(req, res, next);
     }
 
     public logout(req: express.Request,
         res: express.Response) {
-        req.logOut();
-        // Even though the logout was successful, send the status code
-        // `401` to be intercepted and reroute the user to the appropriate
-        // page
-        res.sendStatus(401);
+        res.clearCookie('remember_me');
+        req.session.destroy(function (err) {
+            // Even though the logout was successful, send the status code
+            // `401` to be intercepted and reroute the user to the appropriate
+            // page
+            res.redirect('/');
+        });
+        
     }
 
     public register(req: express.Request,

@@ -14,12 +14,13 @@ module Authentication {
                     router: express.Router,
                     passport: any,
                     auth: any,
-                    admin: any) {
+                    admin: any,
+                    tokenService: any) {
             super(app, router, User);
             this.auth = auth;
             this.admin = admin;
             //instantiate the AuthService to use inside controllers
-            this.authService = new AuthService(passport, auth, admin);
+            this.authService = new AuthService(passport, auth, admin, tokenService);
             //register the controllers/routes
             this.configureRoutes();
             
